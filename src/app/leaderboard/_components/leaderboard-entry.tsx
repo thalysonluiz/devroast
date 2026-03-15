@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import type { BundledLanguage } from "shiki";
 import { LeaderboardCodeCell } from "@/app/_components/leaderboard-code-cell";
 import { CodeBlock } from "@/components/ui/code-block";
@@ -17,6 +18,10 @@ export async function LeaderboardEntry({
   lang,
   lines,
 }: LeaderboardEntryProps) {
+  "use cache";
+  cacheLife({ stale: 3600, revalidate: 3600, expire: 86400 });
+  cacheTag("leaderboard");
+
   return (
     <div className="border border-border-primary overflow-hidden">
       {/* Meta Row */}

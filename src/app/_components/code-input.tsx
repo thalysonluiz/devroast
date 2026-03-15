@@ -1,7 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { BundledLanguage } from "shiki";
+import { createRoast } from "@/app/actions/roast";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { CodeEditor } from "./code-editor";
@@ -14,11 +16,14 @@ type CodeInputProps = {
 };
 
 export function CodeInput({ defaultCode = "" }: CodeInputProps) {
+  const router = useRouter();
   const [code, setCode] = useState(defaultCode);
   const [language, setLanguage] = useState<BundledLanguage | null>(null);
   const [detectedLanguage, setDetectedLanguage] =
     useState<BundledLanguage | null>(null);
   const [roastMode, setRoastMode] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const detectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-detect language via highlight.js (debounced 300ms)
@@ -51,6 +56,31 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
   const charCount = code.length;
   const isOverLimit = charCount > CODE_MAX_CHARS;
 
+
+  const handleSubmit = useCallback(async () => {
+    if (!code.trim() || isOverLimit || isLoading) return;
+    setIsLoading(true);
+    setError(null);
+    const result = await createRoast({
+      code,
+      language: language ?? detectedLanguage,
+      roastMode,
+    });
+    if (result.success) {
+      router.push(`/roast/${result.roastId}`);
+    } else {
+      setError(result.error);
+      setIsLoading(false);
+    }
+  }, [
+    code,
+    language,
+    detectedLanguage,
+    roastMode,
+    isOverLimit,
+    isLoading,
+    router,
+  ]);
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Editor */}
@@ -95,13 +125,12 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
         {/* Character counter — bottom-right of the editor */}
         <div className="flex justify-end px-4 py-1.5 border-t border-border-primary bg-bg-surface">
           <span
-            className={`font-mono text-[11px] tabular-nums transition-colors ${
-              isOverLimit
+            className={`font-mono text-[11px] tabular-nums transition-colors ${isOverLimit
                 ? "text-accent-red"
                 : charCount > CODE_MAX_CHARS * 0.9
                   ? "text-accent-amber"
                   : "text-text-tertiary"
-            }`}
+              }`}
           >
             {charCount.toLocaleString("en-US")} /{" "}
             {CODE_MAX_CHARS.toLocaleString("en-US")}
@@ -124,14 +153,22 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
             {"// maximum sarcasm enabled"}
           </span>
         </div>
-        <Button
-          variant="primary"
-          size="md"
-          className="sm:w-auto w-full"
-          disabled={!code.trim() || isOverLimit}
-        >
-          $ roast_my_code
-        </Button>
+        <div className="flex flex-col sm:items-end gap-1">
+          <Button
+            variant="primary"
+            size="md"
+            className="sm:w-auto w-full"
+            disabled={!code.trim() || isOverLimit || isLoading}
+            onClick={handleSubmit}
+          >
+            {isLoading ? "$ roasting..." : "$ roast_my_code"}
+          </Button>
+          {error && (
+            <span className="font-mono text-[11px] text-accent-red">
+              {error}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
