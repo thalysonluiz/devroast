@@ -1,34 +1,34 @@
 # devroast
 
-> Paste your code. Get roasted.
+> Cole seu código. Leve um roast.
 
-**devroast** is a web app where you paste your code and receive a brutal, AI-powered critique — complete with a shame score and ruthless commentary. No sugarcoating. No participation trophies.
+**devroast** é um app web onde você cola seu código e recebe uma crítica brutal gerada por IA — com uma nota de vergonha e comentários sem papas na língua. Sem elogios vazios. Sem troféu de participação.
 
-Built during **NLW (Next Level Week)**, Rocketseat's hands-on programming event where developers build a complete project from scratch in a few days of intensive live classes.
-
----
-
-## What it does
-
-- **Paste any code** — JavaScript, TypeScript, Python, SQL, whatever you wrote at 2am
-- **Choose your roast level** — toggle between honest feedback and full roast mode (maximum sarcasm)
-- **Get a score** — your code receives a shame score out of 10, the lower the worse
-- **Shame leaderboard** — the worst code on the internet, ranked publicly for everyone to see
+Construído durante o **NLW (Next Level Week)**, o evento de programação intensivo da Rocketseat onde desenvolvedores constroem um projeto completo do zero em poucos dias de aulas ao vivo.
 
 ---
 
-## Features
+## O que faz
 
-- Code editor with syntax highlighting
-- Roast mode toggle for extra brutality
-- Score display with visual ring indicator
-- Public leaderboard of the most shameful submissions
-- Dark terminal aesthetic — because bad code deserves a dark backdrop
+- **Cole qualquer código** — JavaScript, TypeScript, Python, SQL, o que você escreveu às 2h da manhã
+- **Escolha o nível do roast** — alterne entre feedback honesto e modo roast completo (sarcasmo máximo)
+- **Receba uma nota** — seu código ganha uma pontuação de vergonha de 0 a 10, quanto menor pior
+- **Leaderboard da vergonha** — os piores códigos da internet, ranqueados publicamente para todo mundo ver
 
 ---
 
-## Built at NLW — Rocketseat
+## Funcionalidades
 
-This project was built live during **NLW (Next Level Week)** by Rocketseat — a Brazilian tech education platform known for its intensive, project-driven programming events. NLW brings together thousands of developers to build real applications from zero, guided by expert instructors across multiple days of hands-on classes.
+- Editor de código com syntax highlighting
+- Toggle de modo roast para brutalidade extra
+- Exibição de pontuação com anel visual
+- Leaderboard público dos envios mais vergonhosos
+- Estética de terminal dark — porque código ruim merece um fundo escuro
 
-Learn more at [rocketseat.com.br](https://rocketseat.com.br).
+---
+
+## Construído no NLW — Rocketseat
+
+Este projeto foi construído ao vivo durante o **NLW (Next Level Week)** da Rocketseat — plataforma brasileira de educação tech conhecida por seus eventos intensivos e orientados a projetos reais. O NLW reúne milhares de desenvolvedores para construir aplicações do zero, guiados por instrutores especializados ao longo de vários dias de aulas práticas.
+
+Saiba mais em [rocketseat.com.br](https://rocketseat.com.br).
