@@ -7,6 +7,8 @@ import { Toggle } from "@/components/ui/toggle";
 import { CodeEditor } from "./code-editor";
 import { LanguageSelector } from "./language-selector";
 
+const CODE_MAX_CHARS = 5_000;
+
 type CodeInputProps = {
   defaultCode?: string;
 };
@@ -46,6 +48,8 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
   );
 
   const lineCount = code ? code.split("\n").length : 1;
+  const charCount = code.length;
+  const isOverLimit = charCount > CODE_MAX_CHARS;
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -87,6 +91,21 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
             className="flex-1"
           />
         </div>
+
+        {/* Character counter — bottom-right of the editor */}
+        <div className="flex justify-end px-4 py-1.5 border-t border-border-primary bg-bg-surface">
+          <span
+            className={`font-mono text-[11px] tabular-nums transition-colors ${
+              isOverLimit
+                ? "text-accent-red"
+                : charCount > CODE_MAX_CHARS * 0.9
+                  ? "text-accent-amber"
+                  : "text-text-tertiary"
+            }`}
+          >
+            {charCount.toLocaleString()} / {CODE_MAX_CHARS.toLocaleString()}
+          </span>
+        </div>
       </div>
 
       {/* Actions bar */}
@@ -108,7 +127,7 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
           variant="primary"
           size="md"
           className="sm:w-auto w-full"
-          disabled={!code.trim()}
+          disabled={!code.trim() || isOverLimit}
         >
           $ roast_my_code
         </Button>
