@@ -1,9 +1,10 @@
 import type { BundledLanguage } from "shiki";
+import { LeaderboardCodeCell } from "@/app/_components/leaderboard-code-cell";
 import { CodeBlock } from "@/components/ui/code-block";
 
 type LeaderboardEntryProps = {
   rank: number;
-  score: string;
+  score: number;
   code: string;
   lang: BundledLanguage;
   lines: number;
@@ -33,7 +34,7 @@ export async function LeaderboardEntry({
               score:
             </span>
             <span className="font-mono text-[13px] font-bold text-accent-red">
-              {score}
+              {score.toFixed(1)}
             </span>
           </div>
         </div>
@@ -49,10 +50,10 @@ export async function LeaderboardEntry({
         </div>
       </div>
 
-      {/* Code Block */}
-      <div className="h-[120px] overflow-hidden">
+      {/* Collapsible code block */}
+      <LeaderboardCodeCell lineCount={lines}>
         <CodeBlock code={code} lang={lang} bare />
-      </div>
+      </LeaderboardCodeCell>
     </div>
   );
 }
