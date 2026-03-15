@@ -47,7 +47,12 @@ const SUPPORTED_LANGS: BundledLanguage[] = [
 async function highlightCode(
   code: string,
   lang: BundledLanguage,
-): Promise<string> {
+): Promise<string | null> {
+  // Only highlight languages we explicitly support — prevents shiki from
+  // throwing "Language `xyz` is not included in this bundle" for anything
+  // that highlight.js detected but shiki doesn't know about.
+  if (!SUPPORTED_LANGS.includes(lang)) return null;
+
   const highlighter = await getHighlighter();
   const loaded = highlighter.getLoadedLanguages();
 
@@ -60,6 +65,10 @@ async function highlightCode(
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function plainFallback(code: string): string {
+  return `<pre style="margin:0;padding:1rem;background:transparent;color:#fafafa;font-size:13px;line-height:inherit"><code>${escapeHtml(code)}</code></pre>`;
 }
 
 // Indent/dedent helpers (same approach as ray.so)
@@ -149,21 +158,18 @@ export function CodeEditor({
 
   // Re-highlight when code or language changes
   useEffect(() => {
-    if (!effectiveLang || !value) {
-      setHighlightedHtml(`<pre><code>${escapeHtml(value)}</code></pre>`);
-      return;
-    }
+    // Show plain white text immediately — never leave the overlay blank
+    setHighlightedHtml(plainFallback(value));
+
+    if (!effectiveLang || !value) return;
 
     let cancelled = false;
-    const timer = setTimeout(() => {
-      highlightCode(value, effectiveLang).then((html) => {
-        if (!cancelled) setHighlightedHtml(html);
-      });
-    }, 150);
+    highlightCode(value, effectiveLang).then((html) => {
+      if (!cancelled && html !== null) setHighlightedHtml(html);
+    });
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
   }, [value, effectiveLang]);
 
