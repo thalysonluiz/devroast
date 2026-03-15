@@ -8,26 +8,53 @@
     "start": "next start",
     "lint": "biome lint ./src",
     "format": "biome format --write ./src",
-    "check": "biome check --write ./src"
+    "check": "biome check --write ./src",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.43",
+    "@ai-sdk/openai": "^3.0.41",
     "@base-ui/react": "^1.3.0",
+    "@number-flow/react": "^0.6.0",
+    "@tanstack/react-query": "^5.90.21",
+    "@trpc/client": "^11.13.4",
+    "@trpc/server": "^11.13.4",
+    "@trpc/tanstack-react-query": "^11.13.4",
+    "ai": "^6.0.116",
+    "client-only": "^0.0.1",
+    "drizzle-orm": "^0.45.1",
     "hast-util-to-jsx-runtime": "^2.3.6",
     "highlight.js": "^11.11.1",
+    "lucide-react": "^0.577.0",
     "next": "16.1.6",
+    "postgres": "^3.4.8",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "server-only": "^0.0.1",
     "shiki": "^4.0.2",
     "tailwind-merge": "^3.5.0",
-    "tailwind-variants": "^3.2.2"
+    "tailwind-variants": "^3.2.2",
+    "zod": "^4.3.6"
+  },
+  "pnpm": {
+    "overrides": {
+      "drizzle-orm": "$drizzle-orm"
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
+    "@faker-js/faker": "^10.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.3.1",
+    "drizzle-kit": "^0.31.9",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
