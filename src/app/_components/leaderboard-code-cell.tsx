@@ -1,6 +1,5 @@
 "use client";
 
-import { Collapsible } from "@base-ui/react";
 import { type ReactNode, useState } from "react";
 
 type LeaderboardCodeCellProps = {
@@ -20,14 +19,14 @@ export function LeaderboardCodeCell({
 
   if (!showToggle) {
     return (
-      <div className="overflow-hidden" style={{ minHeight: COLLAPSED_HEIGHT }}>
+      <div style={{ minHeight: COLLAPSED_HEIGHT, overflow: "hidden" }}>
         {children}
       </div>
     );
   }
 
   return (
-    <Collapsible.Root open={open} onOpenChange={setOpen}>
+    <div>
       <div
         style={
           open
@@ -39,11 +38,15 @@ export function LeaderboardCodeCell({
               }
         }
       >
-        <Collapsible.Panel keepMounted>{children}</Collapsible.Panel>
+        {children}
       </div>
-      <Collapsible.Trigger className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-border-primary font-mono text-[11px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-border-primary font-mono text-[11px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+      >
         {open ? "▴ show less" : "▸ show more"}
-      </Collapsible.Trigger>
-    </Collapsible.Root>
+      </button>
+    </div>
   );
 }
