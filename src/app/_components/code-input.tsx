@@ -103,7 +103,8 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
                   : "text-text-tertiary"
             }`}
           >
-            {charCount.toLocaleString()} / {CODE_MAX_CHARS.toLocaleString()}
+            {charCount.toLocaleString("en-US")} /{" "}
+            {CODE_MAX_CHARS.toLocaleString("en-US")}
           </span>
         </div>
       </div>
