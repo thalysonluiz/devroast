@@ -11,19 +11,38 @@
 - **tailwind-variants** (`tv`) for component variants; **tailwind-merge** (`twMerge`) for simple merges
 - **@base-ui/react** — headless primitives (e.g. Toggle/Switch)
 - **shiki** — server-side syntax highlighting in `CodeBlock`
+- **tRPC v11** + **TanStack Query v5** — type-safe API layer; see `src/trpc/AGENTS.md`
+- **Drizzle ORM** over **postgres** — see `src/db/AGENTS.md`
+- **@number-flow/react** — animated number transitions in Client Components
 
 ## Project structure
 
 ```
 src/
   app/
-    _components/   # app-level components (Navbar, CodeInput, …)
+    _components/   # app-level components (Navbar, CodeInput, metrics…)
+                   # see src/app/_components/AGENTS.md
     globals.css    # @theme design tokens
-    layout.tsx     # root layout (Navbar lives here)
+    layout.tsx     # root layout (Navbar + TRPCReactProvider live here)
     page.tsx       # homepage
+    api/
+      trpc/[trpc]/ # tRPC fetch adapter (GET + POST)
   components/
     ui/            # reusable UI primitives
       AGENTS.md    # UI component rules (read before adding components)
+  db/
+    AGENTS.md      # Drizzle ORM rules
+    index.ts       # db client + re-exports sql
+    schema/        # table definitions
+    migrations/    # drizzle-kit generated SQL
+  trpc/
+    AGENTS.md      # tRPC architecture rules
+    init.ts        # initTRPC, baseProcedure, createTRPCRouter
+    query-client.ts
+    client.tsx     # TRPCReactProvider, useTRPC ("use client")
+    server.tsx     # caller, trpc proxy, HydrateClient (server-only)
+    routers/
+      _app.ts      # appRouter + AppRouter type
 ```
 
 ## Design tokens (key)

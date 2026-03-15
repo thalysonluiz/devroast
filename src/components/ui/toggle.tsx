@@ -1,6 +1,7 @@
 "use client";
 
 import { Switch } from "@base-ui/react/switch";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 type ToggleProps = {
@@ -14,14 +15,30 @@ type ToggleProps = {
 };
 
 export function Toggle({
-  checked,
-  defaultChecked,
+  checked: controlledChecked,
+  defaultChecked = false,
   onCheckedChange,
   label,
   disabled,
   name,
   className,
 }: ToggleProps) {
+  // Mirror the switch state locally so the label color always matches,
+  // regardless of whether the component is controlled or uncontrolled.
+  // This also eliminates the hydration mismatch caused by reading the raw
+  // `checked` prop before @base-ui has initialised its internal state.
+  const [internalChecked, setInternalChecked] = useState(
+    controlledChecked ?? defaultChecked,
+  );
+
+  const isChecked =
+    controlledChecked !== undefined ? controlledChecked : internalChecked;
+
+  function handleCheckedChange(next: boolean) {
+    setInternalChecked(next);
+    onCheckedChange?.(next);
+  }
+
   return (
     <div
       className={twMerge(
@@ -31,9 +48,9 @@ export function Toggle({
       )}
     >
       <Switch.Root
-        checked={checked}
+        checked={controlledChecked}
         defaultChecked={defaultChecked}
-        onCheckedChange={onCheckedChange}
+        onCheckedChange={handleCheckedChange}
         disabled={disabled}
         name={name}
         aria-label={label}
@@ -60,7 +77,7 @@ export function Toggle({
         <span
           className={twMerge(
             "font-mono text-xs transition-colors select-none",
-            checked ? "text-accent-green" : "text-text-secondary",
+            isChecked ? "text-accent-green" : "text-text-secondary",
           )}
         >
           {label}

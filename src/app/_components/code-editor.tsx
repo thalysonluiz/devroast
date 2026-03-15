@@ -47,7 +47,12 @@ const SUPPORTED_LANGS: BundledLanguage[] = [
 async function highlightCode(
   code: string,
   lang: BundledLanguage,
-): Promise<string> {
+): Promise<string | null> {
+  // Only highlight languages we explicitly support — prevents shiki from
+  // throwing "Language `xyz` is not included in this bundle" for anything
+  // that highlight.js detected but shiki doesn't know about.
+  if (!SUPPORTED_LANGS.includes(lang)) return null;
+
   const highlighter = await getHighlighter();
   const loaded = highlighter.getLoadedLanguages();
 
@@ -60,6 +65,10 @@ async function highlightCode(
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function plainFallback(code: string): string {
+  return `<pre style="margin:0;padding:1rem;background:transparent;color:#fafafa;font-size:13px;line-height:inherit"><code>${escapeHtml(code)}</code></pre>`;
 }
 
 // Indent/dedent helpers (same approach as ray.so)
@@ -149,28 +158,25 @@ export function CodeEditor({
 
   // Re-highlight when code or language changes
   useEffect(() => {
-    if (!effectiveLang || !value) {
-      setHighlightedHtml(`<pre><code>${escapeHtml(value)}</code></pre>`);
-      return;
-    }
+    // Show plain white text immediately — never leave the overlay blank
+    setHighlightedHtml(plainFallback(value));
+
+    if (!effectiveLang || !value) return;
 
     let cancelled = false;
-    const timer = setTimeout(() => {
-      highlightCode(value, effectiveLang).then((html) => {
-        if (!cancelled) setHighlightedHtml(html);
-      });
-    }, 150);
+    highlightCode(value, effectiveLang).then((html) => {
+      if (!cancelled && html !== null) setHighlightedHtml(html);
+    });
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
   }, [value, effectiveLang]);
 
-  // Sync scroll between textarea and overlay
+  // Sync overlay scroll to match the textarea's own scroll (horizontal only;
+  // vertical scroll is handled by the parent container in code-input.tsx)
   const syncScroll = useCallback(() => {
     if (textareaRef.current && overlayRef.current) {
-      overlayRef.current.scrollTop = textareaRef.current.scrollTop;
       overlayRef.current.scrollLeft = textareaRef.current.scrollLeft;
     }
   }, []);
@@ -201,13 +207,13 @@ export function CodeEditor({
 
   return (
     <div
-      className={`relative font-mono text-[13px] leading-relaxed overflow-hidden${className ? ` ${className}` : ""}`}
+      className={`relative font-mono text-[13px] leading-relaxed${className ? ` ${className}` : ""}`}
     >
       {/* Syntax highlight overlay (read-only, pointer-events disabled) */}
       <div
         ref={overlayRef}
         aria-hidden="true"
-        className="absolute inset-0 overflow-auto pointer-events-none"
+        className="absolute inset-0 overflow-hidden pointer-events-none"
         style={{ lineHeight: "inherit" }}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: shiki output is trusted
         dangerouslySetInnerHTML={{ __html: highlightedHtml }}
@@ -225,7 +231,7 @@ export function CodeEditor({
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck={false}
-        className="relative w-full min-h-full p-4 bg-transparent text-transparent caret-text-primary resize-none outline-none overflow-auto"
+        className="relative w-full min-h-full p-4 bg-transparent text-transparent caret-text-primary resize-none outline-none overflow-hidden"
         style={{ lineHeight: "inherit" }}
       />
     </div>

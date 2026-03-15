@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   description: "See the full AI-powered roast of your code submission.",
 };
 
-// ── Verdict styles — covers all 5 enum values ────────────────────────────────
-
+// Verdict styles covering all verdict enum values.
 const verdictStyles = {
   clean_code: {
     dot: "bg-accent-green",
@@ -42,8 +41,6 @@ const verdictStyles = {
   },
 };
 
-// ── Parse stored suggestedFix string back into DiffEntry[] ──────────────────
-
 type DiffEntry =
   | { type: "context"; code: string }
   | { type: "removed"; code: string }
@@ -65,8 +62,6 @@ function parseSuggestedFix(raw: string): DiffEntry[] {
     });
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
-
 type RoastPageProps = {
   params: Promise<{ id: string }>;
 };
@@ -86,16 +81,12 @@ export default async function RoastPage({ params }: RoastPageProps) {
   return (
     <main className="flex flex-col items-center px-4 sm:px-10">
       <div className="flex flex-col gap-10 w-full max-w-[960px] pt-12 sm:pt-16 pb-16">
-        {/* ── Score Hero ── */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-10 sm:gap-12">
-          {/* Score ring */}
           <div className="shrink-0">
             <ScoreRing score={roast.score} />
           </div>
 
-          {/* Roast summary */}
           <div className="flex flex-col gap-4 flex-1 min-w-0">
-            {/* Verdict badge */}
             <div className="flex items-center gap-2">
               <span
                 className={`w-2 h-2 rounded-full shrink-0 ${verdict.dot}`}
@@ -107,7 +98,6 @@ export default async function RoastPage({ params }: RoastPageProps) {
               </span>
             </div>
 
-            {/* Roast quote */}
             <p
               className="text-[18px] sm:text-[20px] text-text-primary leading-relaxed"
               style={{ fontFamily: "IBM Plex Mono, monospace" }}
@@ -115,20 +105,16 @@ export default async function RoastPage({ params }: RoastPageProps) {
               {roast.roastQuote}
             </p>
 
-            {/* Meta: lang + lines */}
             <div className="flex items-center gap-4">
               <span className="font-mono text-[12px] text-text-tertiary">
                 lang: {roast.submission.language}
               </span>
-              <span className="font-mono text-[12px] text-text-tertiary">
-                ·
-              </span>
+              <span className="font-mono text-[12px] text-text-tertiary">·</span>
               <span className="font-mono text-[12px] text-text-tertiary">
                 {roast.submission.lineCount} lines
               </span>
             </div>
 
-            {/* Share button — disabled for now */}
             <div>
               <button
                 type="button"
@@ -141,10 +127,8 @@ export default async function RoastPage({ params }: RoastPageProps) {
           </div>
         </div>
 
-        {/* divider */}
         <hr className="border-none h-px bg-border-primary" />
 
-        {/* ── Submitted Code ── */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <span className="font-mono text-[14px] font-bold text-accent-green">
@@ -164,10 +148,8 @@ export default async function RoastPage({ params }: RoastPageProps) {
           </div>
         </div>
 
-        {/* divider */}
         <hr className="border-none h-px bg-border-primary" />
 
-        {/* ── Detailed Analysis ── */}
         {roast.issues.length > 0 && (
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2">
@@ -179,7 +161,6 @@ export default async function RoastPage({ params }: RoastPageProps) {
               </span>
             </div>
 
-            {/* Issues grid: up to 2 columns per row */}
             <div className="flex flex-col gap-5">
               {Array.from(
                 { length: Math.ceil(roast.issues.length / 2) },
@@ -201,10 +182,8 @@ export default async function RoastPage({ params }: RoastPageProps) {
           </div>
         )}
 
-        {/* ── Suggested Fix (Diff) ── */}
         {roast.suggestedFix && (
           <>
-            {/* divider */}
             <hr className="border-none h-px bg-border-primary" />
 
             <div className="flex flex-col gap-6">

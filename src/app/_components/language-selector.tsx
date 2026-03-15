@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { BundledLanguage } from "shiki";
 import { SUPPORTED_LANGS } from "./code-editor";
@@ -64,7 +65,7 @@ export function LanguageSelector({
         className="flex items-center gap-1.5 font-mono text-[11px] text-text-tertiary hover:text-text-secondary transition-colors px-2 py-1 border border-transparent hover:border-border-primary"
       >
         {label}
-        <span className="text-[9px] leading-none">▾</span>
+        <ChevronDown size={12} className="shrink-0" />
       </button>
 
       {open && (

@@ -56,6 +56,7 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
   const charCount = code.length;
   const isOverLimit = charCount > CODE_MAX_CHARS;
 
+
   const handleSubmit = useCallback(async () => {
     if (!code.trim() || isOverLimit || isLoading) return;
     setIsLoading(true);
@@ -80,7 +81,6 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
     isLoading,
     router,
   ]);
-
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Editor */}
@@ -125,13 +125,12 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
         {/* Character counter — bottom-right of the editor */}
         <div className="flex justify-end px-4 py-1.5 border-t border-border-primary bg-bg-surface">
           <span
-            className={`font-mono text-[11px] tabular-nums transition-colors ${
-              isOverLimit
+            className={`font-mono text-[11px] tabular-nums transition-colors ${isOverLimit
                 ? "text-accent-red"
                 : charCount > CODE_MAX_CHARS * 0.9
                   ? "text-accent-amber"
                   : "text-text-tertiary"
-            }`}
+              }`}
           >
             {charCount.toLocaleString("en-US")} /{" "}
             {CODE_MAX_CHARS.toLocaleString("en-US")}

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Strip the background the shiki vesper theme injects into <pre> so the
+   editor overlay stays transparent and the bg-input color shows through. */
+.shiki.shiki,
+.shiki.shiki pre {
+  background: transparent;
+}
+
 @theme {
   --font-sans: ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
