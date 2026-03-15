@@ -173,10 +173,10 @@ export function CodeEditor({
     };
   }, [value, effectiveLang]);
 
-  // Sync scroll between textarea and overlay
+  // Sync overlay scroll to match the textarea's own scroll (horizontal only;
+  // vertical scroll is handled by the parent container in code-input.tsx)
   const syncScroll = useCallback(() => {
     if (textareaRef.current && overlayRef.current) {
-      overlayRef.current.scrollTop = textareaRef.current.scrollTop;
       overlayRef.current.scrollLeft = textareaRef.current.scrollLeft;
     }
   }, []);
@@ -207,13 +207,13 @@ export function CodeEditor({
 
   return (
     <div
-      className={`relative font-mono text-[13px] leading-relaxed overflow-hidden${className ? ` ${className}` : ""}`}
+      className={`relative font-mono text-[13px] leading-relaxed${className ? ` ${className}` : ""}`}
     >
       {/* Syntax highlight overlay (read-only, pointer-events disabled) */}
       <div
         ref={overlayRef}
         aria-hidden="true"
-        className="absolute inset-0 overflow-auto pointer-events-none"
+        className="absolute inset-0 overflow-hidden pointer-events-none"
         style={{ lineHeight: "inherit" }}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: shiki output is trusted
         dangerouslySetInnerHTML={{ __html: highlightedHtml }}
@@ -231,7 +231,7 @@ export function CodeEditor({
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck={false}
-        className="relative w-full min-h-full p-4 bg-transparent text-transparent caret-text-primary resize-none outline-none overflow-auto"
+        className="relative w-full min-h-full p-4 bg-transparent text-transparent caret-text-primary resize-none outline-none overflow-hidden"
         style={{ lineHeight: "inherit" }}
       />
     </div>

@@ -65,9 +65,9 @@ export function CodeInput({ defaultCode = "" }: CodeInputProps) {
         </div>
 
         {/* Editor body: line numbers + code editor */}
-        <div className="flex flex-row min-h-[320px]">
-          {/* Line numbers — dynamic */}
-          <div className="w-12 flex-shrink-0 bg-bg-surface border-r border-border-primary px-3 py-4 flex flex-col select-none">
+        <div className="flex flex-row min-h-[320px] max-h-[520px] overflow-y-auto">
+          {/* Line numbers — dynamic, scrolls with the editor */}
+          <div className="w-12 flex-shrink-0 bg-bg-surface border-r border-border-primary px-3 py-4 flex flex-col select-none sticky left-0">
             {Array.from({ length: lineCount }, (_, i) => i + 1).map((n) => (
               <span
                 key={n}
