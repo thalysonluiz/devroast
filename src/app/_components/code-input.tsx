@@ -1,27 +1,51 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { BundledLanguage } from "shiki";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
-
-const LINE_NUMBERS = Array.from({ length: 16 }, (_, i) => i + 1);
+import { CodeEditor } from "./code-editor";
+import { LanguageSelector } from "./language-selector";
 
 type CodeInputProps = {
-  children: React.ReactNode;
   defaultCode: string;
 };
 
-export function CodeInput({ children, defaultCode }: CodeInputProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [roastMode, setRoastMode] = useState(true);
+export function CodeInput({ defaultCode }: CodeInputProps) {
   const [code, setCode] = useState(defaultCode);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [language, setLanguage] = useState<BundledLanguage | null>(null);
+  const [detectedLanguage, setDetectedLanguage] =
+    useState<BundledLanguage | null>(null);
+  const [roastMode, setRoastMode] = useState(true);
+  const detectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Auto-detect language via highlight.js (debounced 300ms)
+  const detectLanguage = useCallback((input: string) => {
+    if (detectTimerRef.current) clearTimeout(detectTimerRef.current);
+    detectTimerRef.current = setTimeout(async () => {
+      if (!input.trim()) return;
+      const hljs = (await import("highlight.js")).default;
+      const result = hljs.highlightAuto(input);
+      if (result.language) {
+        setDetectedLanguage(result.language as BundledLanguage);
+      }
+    }, 300);
+  }, []);
+
+  // Detect on initial load
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [isEditing]);
+    detectLanguage(defaultCode);
+  }, [defaultCode, detectLanguage]);
+
+  const handleChange = useCallback(
+    (newCode: string) => {
+      setCode(newCode);
+      detectLanguage(newCode);
+    },
+    [detectLanguage],
+  );
+
+  const lineCount = code ? code.split("\n").length : 1;
 
   return (
     <div className="flex flex-col gap-4">
@@ -29,16 +53,22 @@ export function CodeInput({ children, defaultCode }: CodeInputProps) {
       <div className="w-[780px] border border-border-primary bg-bg-input overflow-hidden">
         {/* Window chrome */}
         <div className="flex items-center gap-2 px-4 h-10 border-b border-border-primary bg-bg-surface">
-          <span className="w-3 h-3 rounded-full bg-accent-red" />
-          <span className="w-3 h-3 rounded-full bg-accent-amber" />
-          <span className="w-3 h-3 rounded-full bg-accent-green" />
+          <span className="w-3 h-3 rounded-full bg-accent-red shrink-0" />
+          <span className="w-3 h-3 rounded-full bg-accent-amber shrink-0" />
+          <span className="w-3 h-3 rounded-full bg-accent-green shrink-0" />
+          <div className="flex-1" />
+          <LanguageSelector
+            value={language}
+            detectedLanguage={detectedLanguage}
+            onChange={setLanguage}
+          />
         </div>
 
-        {/* Editor body — flex row, line numbers + content */}
-        <div className="flex flex-row h-[320px]">
-          {/* Line numbers */}
-          <div className="w-12 flex-shrink-0 bg-bg-surface border-r border-border-primary px-3 py-4 flex flex-col gap-2 select-none">
-            {LINE_NUMBERS.map((n) => (
+        {/* Editor body: line numbers + code editor */}
+        <div className="flex flex-row min-h-[320px]">
+          {/* Line numbers — dynamic */}
+          <div className="w-12 flex-shrink-0 bg-bg-surface border-r border-border-primary px-3 py-4 flex flex-col select-none">
+            {Array.from({ length: lineCount }, (_, i) => i + 1).map((n) => (
               <span
                 key={n}
                 className="font-mono text-[12px] text-text-tertiary leading-relaxed"
@@ -48,33 +78,19 @@ export function CodeInput({ children, defaultCode }: CodeInputProps) {
             ))}
           </div>
 
-          {/* Content area */}
-          <div className="flex-1 overflow-auto h-full">
-            {isEditing ? (
-              <textarea
-                ref={textareaRef}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                onBlur={() => setIsEditing(false)}
-                className="w-full h-full p-4 bg-transparent text-text-primary font-mono text-[13px] leading-relaxed resize-none outline-none cursor-text"
-                spellCheck={false}
-              />
-            ) : (
-              <button
-                type="button"
-                className="w-full h-full text-left cursor-text bg-transparent border-0 p-0 overflow-auto"
-                onClick={() => setIsEditing(true)}
-              >
-                {children}
-              </button>
-            )}
-          </div>
+          {/* Code editor (textarea + overlay) */}
+          <CodeEditor
+            value={code}
+            onChange={handleChange}
+            language={language}
+            detectedLanguage={detectedLanguage}
+            className="flex-1"
+          />
         </div>
       </div>
 
       {/* Actions bar */}
       <div className="w-[780px] flex items-center justify-between">
-        {/* Left: toggle + comment */}
         <div className="flex items-center gap-4">
           <Toggle
             checked={roastMode}
@@ -88,8 +104,6 @@ export function CodeInput({ children, defaultCode }: CodeInputProps) {
             {"// maximum sarcasm enabled"}
           </span>
         </div>
-
-        {/* Right: submit button */}
         <Button variant="primary" size="md">
           $ roast_my_code
         </Button>

@@ -1,4 +1,3 @@
-import { CodeBlock } from "@/components/ui/code-block";
 import { CodeInput } from "./_components/code-input";
 
 const SAMPLE_CODE = `async function fetchUser(id) {
@@ -71,9 +70,7 @@ export default function Home() {
         </div>
 
         {/* Code editor (client) + actions bar */}
-        <CodeInput defaultCode={SAMPLE_CODE}>
-          <CodeBlock code={SAMPLE_CODE} lang="javascript" bare />
-        </CodeInput>
+        <CodeInput defaultCode={SAMPLE_CODE} />
 
         {/* Footer hint */}
         <p
