@@ -8,20 +8,37 @@ type LeaderboardCodeCellProps = {
   lineCount: number;
 };
 
+// text-[13px] leading-relaxed (1.625) + p-4 top/bottom (32px) ≈ 3 lines visible
+const COLLAPSED_HEIGHT = "95px";
+
 export function LeaderboardCodeCell({
   children,
   lineCount,
 }: LeaderboardCodeCellProps) {
   const [open, setOpen] = useState(false);
-  const showToggle = lineCount > 5;
+  const showToggle = lineCount > 4;
 
   if (!showToggle) {
-    return <div className="overflow-hidden">{children}</div>;
+    return (
+      <div className="overflow-hidden" style={{ minHeight: COLLAPSED_HEIGHT }}>
+        {children}
+      </div>
+    );
   }
 
   return (
     <Collapsible.Root open={open} onOpenChange={setOpen}>
-      <div className={open ? undefined : "max-h-[120px] overflow-hidden"}>
+      <div
+        style={
+          open
+            ? { minHeight: COLLAPSED_HEIGHT }
+            : {
+                maxHeight: COLLAPSED_HEIGHT,
+                minHeight: COLLAPSED_HEIGHT,
+                overflow: "hidden",
+              }
+        }
+      >
         <Collapsible.Panel keepMounted>{children}</Collapsible.Panel>
       </div>
       <Collapsible.Trigger className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-border-primary font-mono text-[11px] text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer">

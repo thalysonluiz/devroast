@@ -24,8 +24,8 @@ export function LeaderboardEntrySkeleton() {
         </div>
       </div>
 
-      {/* Code block skeleton */}
-      <div className="h-[120px] bg-bg-input animate-pulse" />
+      {/* Code block skeleton — matches ~3 lines of text-[13px] leading-relaxed + p-4 */}
+      <div className="h-[95px] bg-bg-input animate-pulse" />
     </div>
   );
 }
