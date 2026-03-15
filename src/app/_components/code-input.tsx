@@ -8,10 +8,10 @@ import { CodeEditor } from "./code-editor";
 import { LanguageSelector } from "./language-selector";
 
 type CodeInputProps = {
-  defaultCode: string;
+  defaultCode?: string;
 };
 
-export function CodeInput({ defaultCode }: CodeInputProps) {
+export function CodeInput({ defaultCode = "" }: CodeInputProps) {
   const [code, setCode] = useState(defaultCode);
   const [language, setLanguage] = useState<BundledLanguage | null>(null);
   const [detectedLanguage, setDetectedLanguage] =
@@ -32,9 +32,9 @@ export function CodeInput({ defaultCode }: CodeInputProps) {
     }, 300);
   }, []);
 
-  // Detect on initial load
+  // Detect on initial load if defaultCode was provided
   useEffect(() => {
-    detectLanguage(defaultCode);
+    if (defaultCode) detectLanguage(defaultCode);
   }, [defaultCode, detectLanguage]);
 
   const handleChange = useCallback(
@@ -48,9 +48,9 @@ export function CodeInput({ defaultCode }: CodeInputProps) {
   const lineCount = code ? code.split("\n").length : 1;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       {/* Editor */}
-      <div className="w-[780px] border border-border-primary bg-bg-input overflow-hidden">
+      <div className="w-full border border-border-primary bg-bg-input overflow-hidden">
         {/* Window chrome */}
         <div className="flex items-center gap-2 px-4 h-10 border-b border-border-primary bg-bg-surface">
           <span className="w-3 h-3 rounded-full bg-accent-red shrink-0" />
@@ -90,7 +90,7 @@ export function CodeInput({ defaultCode }: CodeInputProps) {
       </div>
 
       {/* Actions bar */}
-      <div className="w-[780px] flex items-center justify-between">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <div className="flex items-center gap-4">
           <Toggle
             checked={roastMode}
@@ -104,7 +104,12 @@ export function CodeInput({ defaultCode }: CodeInputProps) {
             {"// maximum sarcasm enabled"}
           </span>
         </div>
-        <Button variant="primary" size="md">
+        <Button
+          variant="primary"
+          size="md"
+          className="sm:w-auto w-full"
+          disabled={!code.trim()}
+        >
           $ roast_my_code
         </Button>
       </div>

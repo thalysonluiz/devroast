@@ -1,21 +1,5 @@
 import { CodeInput } from "./_components/code-input";
 
-const SAMPLE_CODE = `async function fetchUser(id) {
-  const res = await fetch('/api/users/' + id)
-  const data = await res.json()
-  // TODO: handle errors lol
-  return data
-}
-
-var x = 1
-if (x == true) {
-  console.log("yes")
-}
-
-// this definitely works trust me
-eval(localStorage.getItem('userScript'))
-document.write("<h1>Welcome</h1>")`;
-
 const LEADERBOARD_ROWS = [
   {
     rank: 1,
@@ -46,16 +30,16 @@ const LEADERBOARD_ROWS = [
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center px-10">
+    <main className="flex flex-col items-center px-4 sm:px-10">
       {/* ── Hero + editor ── */}
-      <div className="flex flex-col gap-8 w-[780px] pt-20">
+      <div className="flex flex-col gap-8 w-full max-w-[780px] pt-12 sm:pt-20">
         {/* Hero title */}
         <div className="flex flex-col gap-3">
-          <div className="flex items-baseline gap-3">
-            <span className="font-mono text-[36px] font-bold text-accent-green leading-none">
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <span className="font-mono text-[28px] sm:text-[36px] font-bold text-accent-green leading-none">
               $
             </span>
-            <span className="font-mono text-[36px] font-bold text-text-primary leading-none">
+            <span className="font-mono text-[28px] sm:text-[36px] font-bold text-text-primary leading-none">
               paste your code. get roasted.
             </span>
           </div>
@@ -70,7 +54,7 @@ export default function Home() {
         </div>
 
         {/* Code editor (client) + actions bar */}
-        <CodeInput defaultCode={SAMPLE_CODE} />
+        <CodeInput defaultCode="" />
 
         {/* Footer hint */}
         <p
@@ -82,7 +66,7 @@ export default function Home() {
       </div>
 
       {/* ── Leaderboard preview ── */}
-      <div className="flex flex-col gap-6 w-[960px] mt-20">
+      <div className="flex flex-col gap-6 w-full max-w-[960px] mt-16 sm:mt-20">
         {/* Title row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -112,17 +96,17 @@ export default function Home() {
         {/* Table */}
         <div className="border border-border-primary overflow-hidden">
           {/* Table header */}
-          <div className="flex items-center h-10 bg-bg-surface border-b border-border-primary px-5 gap-4">
-            <span className="w-[50px] font-mono text-[12px] font-medium text-text-tertiary">
+          <div className="flex items-center h-10 bg-bg-surface border-b border-border-primary px-4 sm:px-5 gap-4">
+            <span className="w-[40px] sm:w-[50px] font-mono text-[12px] font-medium text-text-tertiary">
               #
             </span>
-            <span className="w-[70px] font-mono text-[12px] font-medium text-text-tertiary">
+            <span className="w-[60px] sm:w-[70px] font-mono text-[12px] font-medium text-text-tertiary">
               score
             </span>
             <span className="flex-1 font-mono text-[12px] font-medium text-text-tertiary">
               code
             </span>
-            <span className="w-[100px] font-mono text-[12px] font-medium text-text-tertiary">
+            <span className="hidden sm:block w-[100px] font-mono text-[12px] font-medium text-text-tertiary">
               lang
             </span>
           </div>
@@ -131,27 +115,27 @@ export default function Home() {
           {LEADERBOARD_ROWS.map((row, i) => (
             <div
               key={row.rank}
-              className={`flex items-start px-5 py-4 gap-4 ${i < LEADERBOARD_ROWS.length - 1 ? "border-b border-border-primary" : ""}`}
+              className={`flex items-start px-4 sm:px-5 py-4 gap-4 ${i < LEADERBOARD_ROWS.length - 1 ? "border-b border-border-primary" : ""}`}
             >
               <span
-                className={`w-[50px] font-mono text-[13px] font-medium ${row.rankColor}`}
+                className={`w-[40px] sm:w-[50px] font-mono text-[13px] font-medium ${row.rankColor}`}
               >
                 {row.rank}
               </span>
-              <span className="w-[70px] font-mono text-[13px] font-bold text-accent-red">
+              <span className="w-[60px] sm:w-[70px] font-mono text-[13px] font-bold text-accent-red">
                 {row.score}
               </span>
-              <div className="flex-1 flex flex-col gap-1">
+              <div className="flex-1 flex flex-col gap-1 min-w-0">
                 {row.code.map((line) => (
                   <span
                     key={line}
-                    className={`font-mono text-[13px] ${line.startsWith("//") || line.startsWith("--") ? "text-text-tertiary" : "text-text-primary"}`}
+                    className={`font-mono text-[13px] truncate ${line.startsWith("//") || line.startsWith("--") ? "text-text-tertiary" : "text-text-primary"}`}
                   >
                     {line}
                   </span>
                 ))}
               </div>
-              <span className="w-[100px] font-mono text-[12px] text-text-secondary">
+              <span className="hidden sm:block w-[100px] font-mono text-[12px] text-text-secondary">
                 {row.lang}
               </span>
             </div>
